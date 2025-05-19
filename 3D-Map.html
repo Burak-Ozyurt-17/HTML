@@ -129,44 +129,57 @@
 " style="position: absolute; bottom:5px ; left: 3px; width: 140px; height: 140px;">
   <canvas id="gaugeCanvas" width="80" height="80" style="z-index: 2;"></canvas>
   <div id="speedText" style="font-size: 13px; color: white; font-family: 'Orbitron', sans-serif; z-index: 3; margin-bottom: -30px;">
-    80 km/h
+    0 km/h
   </div>
 </div>
 
 
   <script>
     require([
-      "esri/Map", "esri/views/SceneView", "esri/views/MapView",
-      "esri/layers/GraphicsLayer", "esri/Graphic", "esri/geometry/Point",
-      "esri/widgets/Compass", "esri/symbols/SimpleMarkerSymbol"
-    ], function(Map, SceneView, MapView, GraphicsLayer, Graphic, Point, Compass, SimpleMarkerSymbol) {
-
-      const mainMap = new Map({ basemap: "hybrid", ground: "world-elevation" });
-      const miniMap = new Map({ basemap: "dark-gray-vector" });
-
-      const sceneView = new SceneView({
-        container: "viewDiv",
-        map: mainMap,
-        camera: {
-          position: { x: 32.8597, y: 39.9334, z: 50 },
-          tilt: 75,
-          heading: 0
-        }
-      });
-
-      const minimapView = new MapView({
-        container: "minimapDiv",
-        map: miniMap,
-        center: [32.8597, 39.9334],
-        zoom: 14,
-        constraints: { rotationEnabled: false },
-        ui: { components: [] }
-      });
-
-      sceneView.ui.add(new Compass({ view: sceneView }), "top-left");
-
-      const graphicsLayer = new GraphicsLayer({ elevationInfo: { mode: "relative-to-ground" } });
-      mainMap.add(graphicsLayer);
+    "esri/Map", "esri/views/SceneView", "esri/views/MapView",
+    "esri/layers/GraphicsLayer", "esri/Graphic", "esri/geometry/Point",
+    "esri/widgets/Compass", "esri/symbols/SimpleMarkerSymbol",
+    "esri/layers/SceneLayer"  // <-- Bunu ekledik
+  ], function(Map, SceneView, MapView, GraphicsLayer, Graphic, Point, Compass, SimpleMarkerSymbol, SceneLayer,TileLayer) {
+  
+    const mainMap = new Map({ basemap: "hybrid", ground: "world-elevation" });
+    const miniMap = new Map({ basemap: "dark-gray-vector" });
+  
+    
+    
+    // Bina yükseklik katmanı
+    const buildingLayer = new SceneLayer({
+      url: "https://basemaps3d.arcgis.com/arcgis/rest/services/OpenStreetMap3D_Buildings_v1/SceneServer"
+    });
+    const treeLayer = new SceneLayer({
+      url: "https://basemaps3d.arcgis.com/arcgis/rest/services/OpenStreetMap3D_Trees_Realistic_v1/SceneServer"
+    });
+    mainMap.add(buildingLayer); 
+    mainMap.add(treeLayer);// Haritaya bina katmanını ekledik
+  
+    const sceneView = new SceneView({
+      container: "viewDiv",
+      map: mainMap,
+      camera: {
+        position: { x: 32.8597, y: 39.9334, z: 50 },
+        tilt: 75,
+        heading: 0
+      }
+    });
+  
+    const minimapView = new MapView({
+      container: "minimapDiv",
+      map: miniMap,
+      center: [32.8597, 39.9334],
+      zoom: 14,
+      constraints: { rotationEnabled: false },
+      ui: { components: [] }
+    });
+  
+    sceneView.ui.add(new Compass({ view: sceneView }), "top-left");
+  
+    const graphicsLayer = new GraphicsLayer({ elevationInfo: { mode: "relative-to-ground" } });
+    mainMap.add(graphicsLayer);
 
       const droneSymbol = {
         type: "point-3d",
@@ -326,6 +339,8 @@
   </script>
 </body>
 </html>
+
+
 
 
 
