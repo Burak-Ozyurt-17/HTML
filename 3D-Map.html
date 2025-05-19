@@ -277,7 +277,6 @@
         requestAnimationFrame(animateFPS);
       }
       animateFPS();
-
       async function moveDroneAndCamera() {
         if (isAnimating) return;
 
@@ -336,6 +335,47 @@
 
       setInterval(moveDroneAndCamera, 120);
     });
+    let currentSpeed = 0;
+
+function updateSpeedGauge(speed) {
+  const canvas = document.getElementById("gaugeCanvas");
+  const ctx = canvas.getContext("2d");
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  const centerX = canvas.width / 2;
+  const centerY = canvas.height / 2;
+  const radius = 35;
+  const startAngle = 0.75 * Math.PI;
+  const endAngle = 2.25 * Math.PI;
+
+  // Hız göstergesi yayı (beyaz)
+  const normalized = Math.min(speed, 80) / 80; // 0 ile 1 arası
+  const angle = startAngle + normalized * (2 * Math.PI - startAngle - (2 * Math.PI - endAngle));
+
+  // İğne
+  const needleLength = radius+5 ;
+  const needleAngle = startAngle + normalized * (2 * Math.PI - startAngle - (2 * Math.PI - endAngle));
+  const needleX = centerX + needleLength * Math.cos(needleAngle);
+  const needleY = centerY + needleLength * Math.sin(needleAngle);
+
+  ctx.beginPath();
+  ctx.moveTo(centerX, centerY);
+  ctx.lineTo(needleX, needleY);
+  ctx.lineWidth = 3;
+  ctx.strokeStyle = "white";
+  ctx.stroke();
+
+  // Metin
+  document.getElementById("speedText").textContent = `${Math.round(speed)} km/h`;
+}
+
+// Hızı test etmek için sahte bir örnek:
+setInterval(() => {
+  currentSpeed = (Math.sin(Date.now() / 1000) + 1) * 40; // 0-80 arası dalgalanan hız
+  updateSpeedGauge(currentSpeed);
+}, 100);
+
   </script>
 </body>
 </html>
