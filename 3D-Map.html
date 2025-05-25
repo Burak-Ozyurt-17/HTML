@@ -15,6 +15,7 @@
       margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden;
       font-family: 'Inter', sans-serif;
     }
+    
     #viewDiv { position: absolute; top: 0; left: 0; right: 0; bottom: 0; }
     #minimapDiv {
       position: absolute; top: 5px; left: 5px; width: 180px; height: 180px;
@@ -36,7 +37,7 @@
       width: 80px;
       height: 250px;
       background: rgba(255, 255, 255, 1);
-      border: 1px solid #aaa;
+      border: 1px solid #aaa;.
       border-radius: 10px;
       z-index: 20;
       display: flex;
@@ -104,6 +105,17 @@
       border-radius: 6px;
       border: 1px solid #aaa;
     }
+    #camerabox{
+      position:absolute;
+      bottom:15px;
+      width:236px;
+      height:177px;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 6px 0;
+      border-radius: 6px;
+      border: 1px solid #aaa;
+    }
+
 
   </style>
 </head>
@@ -111,6 +123,10 @@
   <div id="viewDiv"></div>
   <div id="minimapDiv"></div>
   <div id="infoPanel"></div>
+  <div id="camerabox">  
+  <img src="http://127.0.0.1:5000/video_feed"style="position:absolute;left:8px;bottom:12px;width: 216px; height: 162px;">
+  </div>
+
 
   <div id="altitudeContainer">
     <div id="altitudeScroller">
@@ -269,6 +285,7 @@
       }
 
       let lastFrameTime = performance.now();
+  
       function animateFPS() {
         const now = performance.now();
         const fps = 1000 / (now - lastFrameTime);
@@ -369,16 +386,66 @@ function updateSpeedGauge(speed) {
   // Metin
   document.getElementById("speedText").textContent = `${Math.round(speed)} km/h`;
 }
+    function toRad(angle) {
+      return angle * Math.PI / 180;
+    }
+
+    function toDeg(rad) {
+      return rad * 180 / Math.PI;
+    }
+
+    function haversineDistance(lat1, lon1, lat2, lon2) {
+      const R = 6371; // km
+      const dLat = toRad(lat2 - lat1);
+      const dLon = toRad(lon2 - lon1);
+      const a = Math.sin(dLat / 2) ** 2 +
+                Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+                Math.sin(dLon / 2) ** 2;
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      return R * c;
+    }
+
+    function distance3D(lat1, lon1, alt1, lat2, lon2, alt2) {
+      const horizontalDist = haversineDistance(lat1, lon1, lat2, lon2);
+      const altDiffKm = (alt2 - alt1) / 1000;
+      return Math.sqrt(horizontalDist ** 2 + altDiffKm ** 2);
+    }
+     let speedKmh=20;
+     function runCalculation() {
+      // Sabit veriler
+      const lat1 = 41.0, lon1 = 29.0, alt1 = 100;      // Başlangıç
+      const lat2 = 41.0001, lon2 = 29.0001, alt2 = 150; // Bitiş
+      const timeSec = 1; // saniye
+
+      const dist = distance3D(lat1, lon1, alt1, lat2, lon2, alt2);
+      speedKmh = dist / (timeSec / 3600);
+
+      // 45° eğimle yere düşen nokta hesaplama
+      const distMeters = alt1; // 45° => yatay = dikey
+      const azimuthDeg = 90;
+      const R = 6378137; // metre
+
+      const dLat = distMeters * Math.cos(toRad(azimuthDeg)) / R;
+      const dLon = distMeters * Math.sin(toRad(azimuthDeg)) / (R * Math.cos(toRad(lat1)));
+
+      const newLat = lat1 + toDeg(dLat);
+      const newLon = lon1 + toDeg(dLon);
+       
+     }
+     
+     
 
 // Hızı test etmek için sahte bir örnek:
 setInterval(() => {
-  currentSpeed = (Math.sin(Date.now() / 1000) + 1) * 40; // 0-80 arası dalgalanan hız
-  updateSpeedGauge(currentSpeed);
+  runCalculation();
+  currentSpeed = (speedKmh); 
+  updateSpeedGauge(speedKmh);
 }, 100);
 
   </script>
 </body>
 </html>
+
 
 
 
