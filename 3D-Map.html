@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="tr">
 <head>
   <meta charset="utf-8" />
@@ -14,7 +14,7 @@
       margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden;
       font-family: 'Inter', sans-serif;
     }
-    
+
     #viewDiv { position: absolute; top: 0; left: 0; right: 0; bottom: 0; }
     #minimapDiv {
       position: absolute; top: 5px; left: 5px; width: 180px; height: 180px;
@@ -90,7 +90,6 @@
     #leftSolidLine { left: 5px; }
     #rightSolidLine { right: 5px; }
 
-    /* Yeni Altitude Değer Kutusu */
     #altitudeValueBox {
       position: absolute;
       bottom: -35px;
@@ -107,15 +106,14 @@
     #camerabox{
       position:absolute;
       bottom:15px;
-      width:236px;
-      height:177px;
+      width:300px;
+      height:225px;
       background: rgba(0, 0, 0, 0.7);
       padding: 6px 0;
       border-radius: 6px;
       border: 1px solid #aaa;
     }
 
-    /* Hız Göstergesi ve Metin */
     #gaugeContainer {
       position: absolute;
       bottom: 20px;
@@ -153,15 +151,15 @@
 
   <div id="camerabox">
     <img src="http://127.0.0.1:5000/video_feed"
-         style="position:absolute; left:8px; bottom:12px; width:216px; height:162px;">
+         style="position:absolute; left:8px; bottom:12px; width:260px; height:195px;">
          <div id="detectionText"
        style="position: absolute; left: 8px; top: 8px; 
               color: white; background: rgba(0,0,0,0.5); 
               padding: 4px; font-size: 14px; max-width: 200px; 
               border-radius: 4px;">
-           
+
    </div>
-  
+
   </div>
 
   <div id="altitudeContainer">
@@ -191,7 +189,7 @@
       Map, SceneView, MapView, GraphicsLayer, Graphic, Point,
       Compass, SimpleMarkerSymbol, SceneLayer
     ) {
-      // 1️⃣ Harita & SceneView / Minimap Kurulumu
+
       const mainMap = new Map({ basemap: "hybrid", ground: "world-elevation" });
       const miniMap = new Map({ basemap: "dark-gray-vector" });
 
@@ -225,7 +223,6 @@
       const graphicsLayer = new GraphicsLayer({ elevationInfo: { mode: "relative-to-ground" } });
       mainMap.add(graphicsLayer);
 
-      // 2️⃣ Drone & Mini Marker Tanımları
       let altitude = 50;
       let dronePoint = new Point({
         x: 32.8597,
@@ -270,7 +267,6 @@
       const animDuration = 0.2;
       let isAnimating = false;
 
-      // 3️⃣ İrtifa Göstergesi Etiketleri
       const altitudeLabels = document.getElementById("altitudeLabels");
       altitudeLabels.innerHTML = "";
       for (let i = 0; i <= 100; i += 5) {
@@ -301,7 +297,6 @@
         }
       }
 
-      // 4️⃣ Info Panel & FPS Güncelleme
       function updateInfoPanel(fps) {
         const { x, y } = drone.geometry;
         document.getElementById("infoPanel").innerHTML = `
@@ -323,7 +318,6 @@
       }
       animateFPS();
 
-      // 5️⃣ Drone Hareketi & Kamera Takibi
       async function moveDroneAndCamera() {
         if (isAnimating) return;
 
@@ -382,9 +376,8 @@
 
       setInterval(moveDroneAndCamera, 120);
 
-      // 6️⃣ Hız Göstergesi Fonksiyonu
       function updateSpeedGauge(speed) {
-        
+
         const canvas = document.getElementById("gaugeCanvas");
         const ctx = canvas.getContext("2d");
         ctx.clearRect(0, 0, canvas.width, canvas.height); 
@@ -408,10 +401,9 @@
         ctx.stroke();
 
         document.getElementById("speedText").textContent = `${Math.round(speed)} km/h`;
-        
+
       }
 
-      // 7️⃣ Yardımcı Matematik Fonksiyonları
       function toRad(angle) {
         return angle * Math.PI / 180;
       }
@@ -419,7 +411,7 @@
         return rad * 180 / Math.PI;
       }
       function haversineDistance(lat1, lon1, lat2, lon2) {
-        const R = 6371; // km
+        const R = 6371; 
         const dLat = toRad(lat2 - lat1);
         const dLon = toRad(lon2 - lon1);
         const a = Math.sin(dLat / 2) ** 2 +
@@ -434,7 +426,6 @@
         return Math.sqrt(horizontalDist ** 2 + altDiffKm ** 2);
       }
 
-      // 8️⃣ Zaman ve Konum Verilerini Saklama
       let lastTime = Date.now();
       let lastLat = prevPos.y;
       let lastLon = prevPos.x;
@@ -446,8 +437,8 @@
         if (!drone || !prevPos) return;
 
         const now = Date.now();
-        
-        const timeDifferenceSec = (now - lastTime) / 1000; // saniye cinsinden
+
+        const timeDifferenceSec = (now - lastTime) / 1000; 
 
         const lat1 = lastLat;
         const lon1 = lastLon;
@@ -458,12 +449,11 @@
         const alt2 = drone.geometry.z;
 
         const dist = distance3D(lat1, lon1, alt1, lat2, lon2, alt2);
-        const instantSpeed = dist / (timeDifferenceSec / 3600); // km/h
+        const instantSpeed = dist / (timeDifferenceSec / 3600); 
         smoothSpeed = alpha * instantSpeed + (1 - alpha) * smoothSpeed;
 
         updateSpeedGauge(smoothSpeed);
 
-        // Konsola yazdır (lat1, lat2, lon1, lon2, alt1, alt2, timeDifference)
         console.log("lat1:", lat1.toFixed(6), "lat2:", lat2.toFixed(6));
         console.log("lon1:", lon1.toFixed(6), "lon2:", lon2.toFixed(6));
         console.log("alt1:", alt1.toFixed(2), "alt2:", alt2.toFixed(2));
@@ -491,15 +481,11 @@
     });
 }
 
-// Sayfa yüklendiğinde başlatmak için:
 document.addEventListener('DOMContentLoaded', () => {
-  fetchDetections();  // İlk çağrı hemen yapılsın
-  setInterval(fetchDetections, 1000);  // 1 saniyede bir yenile
+  fetchDetections();  
+  setInterval(fetchDetections, 1000);  
 });
     });
   </script>
 </body>
 </html>
-
-
-
