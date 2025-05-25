@@ -9,7 +9,6 @@
   <script src="https://js.arcgis.com/4.32/"></script>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
 
-
   <style>
     html, body {
       margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden;
@@ -37,7 +36,7 @@
       width: 80px;
       height: 250px;
       background: rgba(255, 255, 255, 1);
-      border: 1px solid #aaa;.
+      border: 1px solid #aaa;
       border-radius: 10px;
       z-index: 20;
       display: flex;
@@ -108,25 +107,54 @@
     #camerabox{
       position:absolute;
       bottom:15px;
-      width:316px;
-      height:237px;
+      width:236px;
+      height:177px;
       background: rgba(0, 0, 0, 0.7);
       padding: 6px 0;
       border-radius: 6px;
       border: 1px solid #aaa;
     }
 
-
+    /* Hız Göstergesi ve Metin */
+    #gaugeContainer {
+      position: absolute;
+      bottom: 20px;
+      right: 10px;
+      width: 135px;
+      height: 135px;
+      background: rgba(0, 0, 0, 0.6);
+      border-radius: 200px;
+      padding: 6px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+    }
+    #gaugeCanvas {
+      z-index: 2;
+    }
+    #speedText {
+      font-size: 13px;
+      color: white;
+      font-family: 'Orbitron', sans-serif;
+      z-index: 3;
+      margin-bottom: -30px;
+      text-align: center;
+      width: 100%;
+    }
   </style>
 </head>
 <body>
   <div id="viewDiv"></div>
   <div id="minimapDiv"></div>
   <div id="infoPanel"></div>
-  <div id="camerabox">  
-  <img src="http://127.0.0.1:5000/video_feed"style="position:absolute;left:8px;bottom:12px;width: 296px; height: 222px;">
-  </div>
 
+  <div id="camerabox">
+    <img src="http://127.0.0.1:5000/video_feed"
+         style="position:absolute; left:8px; bottom:12px; width:216px; height:162px;">
+  </div>
 
   <div id="altitudeContainer">
     <div id="altitudeScroller">
@@ -135,68 +163,71 @@
     <div id="targetLine"></div>
     <div id="leftSolidLine"></div>
     <div id="rightSolidLine"></div>
-    <div id="altitudeValueBox">50 m</div> <!-- Yeni kutu burada -->
+    <div id="altitudeValueBox">50 m</div>
   </div>
-  <div style="position: absolute; bottom: 20px; right: 10px; width: 135px; height: 135px;
-     background: rgba(0, 0, 0, 0.6); border-radius: 200px; padding: 6px;
-     ; box-shadow: 0 4px 10px rgba(0,0,0,0.3); 
-     display: flex; flex-direction: column; align-items: center; justify-content: center;">
-  <img src="https://raw.githubusercontent.com/Burak-Ozyurt-17/FireHawk-UI/main/Web%20Sitesi%20UI%20(2).png
-" style="position: absolute; bottom:5px ; left: 3px; width: 140px; height: 140px;">
-  <canvas id="gaugeCanvas" width="80" height="80" style="z-index: 2;"></canvas>
-  <div id="speedText" style="font-size: 13px; color: white; font-family: 'Orbitron', sans-serif; z-index: 3; margin-bottom: -30px;">
-    0 km/h
-  </div>
-</div>
 
+  <div id="gaugeContainer">
+    <img src="https://raw.githubusercontent.com/Burak-Ozyurt-17/FireHawk-UI/main/Web%20Sitesi%20UI%20(2).png"
+         style="position:absolute; bottom:5px; left:3px; width:140px; height:140px;">
+    <canvas id="gaugeCanvas" width="80" height="80"></canvas>
+    <div id="speedText">0 km/h</div>
+  </div>
 
   <script>
     require([
-    "esri/Map", "esri/views/SceneView", "esri/views/MapView",
-    "esri/layers/GraphicsLayer", "esri/Graphic", "esri/geometry/Point",
-    "esri/widgets/Compass", "esri/symbols/SimpleMarkerSymbol",
-    "esri/layers/SceneLayer"  // <-- Bunu ekledik
-  ], function(Map, SceneView, MapView, GraphicsLayer, Graphic, Point, Compass, SimpleMarkerSymbol, SceneLayer,TileLayer) {
-  
-    const mainMap = new Map({ basemap: "hybrid", ground: "world-elevation" });
-    const miniMap = new Map({ basemap: "dark-gray-vector" });
-  
-    
-    
-    // Bina yükseklik katmanı
-    const buildingLayer = new SceneLayer({
-      url: "https://basemaps3d.arcgis.com/arcgis/rest/services/OpenStreetMap3D_Buildings_v1/SceneServer"
-    });
-    const treeLayer = new SceneLayer({
-      url: "https://basemaps3d.arcgis.com/arcgis/rest/services/OpenStreetMap3D_Trees_Realistic_v1/SceneServer"
-    });
-    mainMap.add(buildingLayer); 
-    mainMap.add(treeLayer);// Haritaya bina katmanını ekledik
-  
-    const sceneView = new SceneView({
-      container: "viewDiv",
-      map: mainMap,
-      camera: {
-        position: { x: 32.8597, y: 39.9334, z: 50 },
-        tilt: 75,
-        heading: 0
-      }
-    });
-  
-    const minimapView = new MapView({
-      container: "minimapDiv",
-      map: miniMap,
-      center: [32.8597, 39.9334],
-      zoom: 14,
-      constraints: { rotationEnabled: false },
-      ui: { components: [] }
-    });
-  
-    sceneView.ui.add(new Compass({ view: sceneView }), "top-left");
-  
-    const graphicsLayer = new GraphicsLayer({ elevationInfo: { mode: "relative-to-ground" } });
-    mainMap.add(graphicsLayer);
+      "esri/Map", "esri/views/SceneView", "esri/views/MapView",
+      "esri/layers/GraphicsLayer", "esri/Graphic", "esri/geometry/Point",
+      "esri/widgets/Compass", "esri/symbols/SimpleMarkerSymbol",
+      "esri/layers/SceneLayer"
+    ], function(
+      Map, SceneView, MapView, GraphicsLayer, Graphic, Point,
+      Compass, SimpleMarkerSymbol, SceneLayer
+    ) {
+      // 1️⃣ Harita & SceneView / Minimap Kurulumu
+      const mainMap = new Map({ basemap: "hybrid", ground: "world-elevation" });
+      const miniMap = new Map({ basemap: "dark-gray-vector" });
 
+      const buildingLayer = new SceneLayer({
+        url: "https://basemaps3d.arcgis.com/arcgis/rest/services/OpenStreetMap3D_Buildings_v1/SceneServer"
+      });
+      const treeLayer = new SceneLayer({
+        url: "https://basemaps3d.arcgis.com/arcgis/rest/services/OpenStreetMap3D_Trees_Realistic_v1/SceneServer"
+      });
+      mainMap.add(buildingLayer);
+      mainMap.add(treeLayer);
+
+      const sceneView = new SceneView({
+        container: "viewDiv",
+        map: mainMap,
+        camera: {
+          position: { x: 32.8597, y: 39.9334, z: 50 },
+          tilt: 75,
+          heading: 0
+        }
+      });
+
+      const minimapView = new MapView({
+        container: "minimapDiv",
+        map: miniMap,
+        center: [32.8597, 39.9334],
+        zoom: 14,
+        constraints: { rotationEnabled: false },
+        ui: { components: [] }
+      });
+
+      sceneView.ui.add(new Compass({ view: sceneView }), "top-left");
+
+      const graphicsLayer = new GraphicsLayer({ elevationInfo: { mode: "relative-to-ground" } });
+      mainMap.add(graphicsLayer);
+
+      // 2️⃣ Drone & Mini Marker Tanımları
+      let altitude = 50;
+      let dronePoint = new Point({
+        x: 32.8597,
+        y: 39.9334,
+        z: altitude,
+        spatialReference: { wkid: 4326 }
+      });
       const droneSymbol = {
         type: "point-3d",
         symbolLayers: [{
@@ -209,16 +240,12 @@
           depth: 4
         }]
       };
-
       const markerSymbol = new SimpleMarkerSymbol({
         style: "circle",
         color: "red",
         size: 10
       });
 
-      let altitude = 50;
-
-      let dronePoint = new Point({ x: 32.8597, y: 39.9334, z: altitude, spatialReference: { wkid: 4326 } });
       const drone = new Graphic({ geometry: dronePoint, symbol: droneSymbol });
       const miniMarker = new Graphic({ geometry: dronePoint, symbol: markerSymbol });
 
@@ -238,9 +265,9 @@
       const animDuration = 0.2;
       let isAnimating = false;
 
+      // 3️⃣ İrtifa Göstergesi Etiketleri
       const altitudeLabels = document.getElementById("altitudeLabels");
       altitudeLabels.innerHTML = "";
-
       for (let i = 0; i <= 100; i += 5) {
         const label = document.createElement("div");
         label.className = "altitudeLabel";
@@ -250,7 +277,6 @@
 
       function updateAltitudeIndicator(currentAltitude) {
         const container = document.getElementById("altitudeContainer");
-
         const labelHeight = 30;
         const step = 5;
         const maxAltitude = 100;
@@ -270,22 +296,19 @@
         }
       }
 
+      // 4️⃣ Info Panel & FPS Güncelleme
       function updateInfoPanel(fps) {
         const { x, y } = drone.geometry;
         document.getElementById("infoPanel").innerHTML = `
           <strong>Latitude:</strong> ${y.toFixed(6)}<br>
           <strong>Longitude:</strong> ${x.toFixed(6)}<br>
-          
         `;
         updateAltitudeIndicator(altitude);
-
-        // Yeni değer kutusunu güncelle
         const altBox = document.getElementById("altitudeValueBox");
         if (altBox) altBox.textContent = `${altitude.toFixed(1)} m`;
       }
 
       let lastFrameTime = performance.now();
-  
       function animateFPS() {
         const now = performance.now();
         const fps = 1000 / (now - lastFrameTime);
@@ -294,6 +317,8 @@
         requestAnimationFrame(animateFPS);
       }
       animateFPS();
+
+      // 5️⃣ Drone Hareketi & Kamera Takibi
       async function moveDroneAndCamera() {
         if (isAnimating) return;
 
@@ -351,103 +376,103 @@
       }
 
       setInterval(moveDroneAndCamera, 120);
+
+      // 6️⃣ Hız Göstergesi Fonksiyonu
+      function updateSpeedGauge(speed) {
+        const canvas = document.getElementById("gaugeCanvas");
+        const ctx = canvas.getContext("2d");
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+        const radius = 35;
+        const startAngle = 0.75 * Math.PI;
+        const endAngle = 2.25 * Math.PI;
+
+        const normalized = Math.min(speed, 80) / 80;
+        const needleAngle = startAngle + normalized * (2 * Math.PI - startAngle - (2 * Math.PI - endAngle));
+        const needleLength = radius + 5;
+        const needleX = centerX + needleLength * Math.cos(needleAngle);
+        const needleY = centerY + needleLength * Math.sin(needleAngle);
+
+        ctx.beginPath();
+        ctx.moveTo(centerX, centerY);
+        ctx.lineTo(needleX, needleY);
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = "white";
+        ctx.stroke();
+
+        document.getElementById("speedText").textContent = `${Math.round(speed)} km/h`;
+      }
+
+      // 7️⃣ Yardımcı Matematik Fonksiyonları
+      function toRad(angle) {
+        return angle * Math.PI / 180;
+      }
+      function toDeg(rad) {
+        return rad * 180 / Math.PI;
+      }
+      function haversineDistance(lat1, lon1, lat2, lon2) {
+        const R = 6371; // km
+        const dLat = toRad(lat2 - lat1);
+        const dLon = toRad(lon2 - lon1);
+        const a = Math.sin(dLat / 2) ** 2 +
+                  Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+                  Math.sin(dLon / 2) ** 2;
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
+      }
+      function distance3D(lat1, lon1, alt1, lat2, lon2, alt2) {
+        const horizontalDist = haversineDistance(lat1, lon1, lat2, lon2);
+        const altDiffKm = (alt2 - alt1) / 1000;
+        return Math.sqrt(horizontalDist ** 2 + altDiffKm ** 2);
+      }
+
+      // 8️⃣ Zaman ve Konum Verilerini Saklama
+      let lastTime = Date.now();
+      let lastLat = prevPos.y;
+      let lastLon = prevPos.x;
+      let lastAlt = prevPos.z;
+
+      function runCalculation() {
+        if (!drone || !prevPos) return;
+
+        const now = Date.now();
+        const timeDifferenceSec = (now - lastTime) / 1000; // saniye cinsinden
+
+        const lat1 = lastLat;
+        const lon1 = lastLon;
+        const alt1 = lastAlt;
+
+        const lat2 = drone.geometry.y;
+        const lon2 = drone.geometry.x;
+        const alt2 = drone.geometry.z;
+
+        const dist = distance3D(lat1, lon1, alt1, lat2, lon2, alt2);
+        const speedKmh = dist / (timeDifferenceSec / 3600); // km/h
+
+        updateSpeedGauge(speedKmh);
+
+        // Konsola yazdır (lat1, lat2, lon1, lon2, alt1, alt2, timeDifference)
+        console.log("lat1:", lat1.toFixed(6), "lat2:", lat2.toFixed(6));
+        console.log("lon1:", lon1.toFixed(6), "lon2:", lon2.toFixed(6));
+        console.log("alt1:", alt1.toFixed(2), "alt2:", alt2.toFixed(2));
+        console.log("timeDifference (s):", timeDifferenceSec.toFixed(3));
+        console.log("--------------------------------------");
+
+        // Son konum / zaman bilgilerini güncelle
+        lastLat = lat2;
+        lastLon = lon2;
+        lastAlt = alt2;
+        lastTime = now;
+      }
+
+      setInterval(runCalculation, 120);
     });
-    let currentSpeed = 0;
-
-function updateSpeedGauge(speed) {
-  const canvas = document.getElementById("gaugeCanvas");
-  const ctx = canvas.getContext("2d");
-
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  const centerX = canvas.width / 2;
-  const centerY = canvas.height / 2;
-  const radius = 35;
-  const startAngle = 0.75 * Math.PI;
-  const endAngle = 2.25 * Math.PI;
-
-  // Hız göstergesi yayı (beyaz)
-  const normalized = Math.min(speed, 80) / 80; // 0 ile 1 arası
-  const angle = startAngle + normalized * (2 * Math.PI - startAngle - (2 * Math.PI - endAngle));
-
-  // İğne
-  const needleLength = radius+5 ;
-  const needleAngle = startAngle + normalized * (2 * Math.PI - startAngle - (2 * Math.PI - endAngle));
-  const needleX = centerX + needleLength * Math.cos(needleAngle);
-  const needleY = centerY + needleLength * Math.sin(needleAngle);
-
-  ctx.beginPath();
-  ctx.moveTo(centerX, centerY);
-  ctx.lineTo(needleX, needleY);
-  ctx.lineWidth = 3;
-  ctx.strokeStyle = "white";
-  ctx.stroke();
-
-  // Metin
-  document.getElementById("speedText").textContent = `${Math.round(speed)} km/h`;
-}
-    function toRad(angle) {
-      return angle * Math.PI / 180;
-    }
-
-    function toDeg(rad) {
-      return rad * 180 / Math.PI;
-    }
-
-    function haversineDistance(lat1, lon1, lat2, lon2) {
-      const R = 6371; // km
-      const dLat = toRad(lat2 - lat1);
-      const dLon = toRad(lon2 - lon1);
-      const a = Math.sin(dLat / 2) ** 2 +
-                Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
-                Math.sin(dLon / 2) ** 2;
-      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-      return R * c;
-    }
-
-    function distance3D(lat1, lon1, alt1, lat2, lon2, alt2) {
-      const horizontalDist = haversineDistance(lat1, lon1, lat2, lon2);
-      const altDiffKm = (alt2 - alt1) / 1000;
-      return Math.sqrt(horizontalDist ** 2 + altDiffKm ** 2);
-    }
-     let speedKmh=20;
-     function runCalculation() {
-      // Sabit veriler
-      const lat1 = 41.0, lon1 = 29.0, alt1 = 100;      // Başlangıç
-      const lat2 = 41.0001, lon2 = 29.0001, alt2 = 150; // Bitiş
-      const timeSec = 1; // saniye
-
-      const dist = distance3D(lat1, lon1, alt1, lat2, lon2, alt2);
-      speedKmh = dist / (timeSec / 3600);
-
-      // 45° eğimle yere düşen nokta hesaplama
-      const distMeters = alt1; // 45° => yatay = dikey
-      const azimuthDeg = 90;
-      const R = 6378137; // metre
-
-      const dLat = distMeters * Math.cos(toRad(azimuthDeg)) / R;
-      const dLon = distMeters * Math.sin(toRad(azimuthDeg)) / (R * Math.cos(toRad(lat1)));
-
-      const newLat = lat1 + toDeg(dLat);
-      const newLon = lon1 + toDeg(dLon);
-       
-     }
-     
-     
-
-// Hızı test etmek için sahte bir örnek:
-setInterval(() => {
-  runCalculation();
-  currentSpeed = (speedKmh); 
-  updateSpeedGauge(speedKmh);
-}, 100);
-
   </script>
 </body>
 </html>
-
-
-
 
 
 
