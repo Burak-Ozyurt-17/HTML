@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <title>AnyChart Choropleth Harita Örneği</title>
+  <script src="https://cdn.anychart.com/releases/8.12.0/js/anychart-bundle.min.js"></script>
+  <style>
+    html, body, #container {
+      width: 100%;
+      height: 100vh;
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+</head>
+<body>
+  <div id="container"></div>
+
+  <script>
+    anychart.onDocumentReady(function() {
+      // Örnek veri: Ülke kodu ve değeri
+      var worldDefaultDataSet = anychart.data.set([
+        { id: 'US', value: 100 },
+        { id: 'RU', value: 70 },
+        { id: 'CN', value: 90 },
+        { id: 'IN', value: 85 },
+        { id: 'BR', value: 60 },
+        { id: 'AU', value: 40 },
+        { id: 'ZA', value: 30 },
+        { id: 'EG', value: 20 },
+        { id: 'FR', value: 50 }
+      ]);
+
+      // Choropleth haritayı oluştur
+      var map = anychart.map();
+
+      // Dünya haritasını yükle
+      map.geoData(anychart.maps.world);
+
+      // Veri setinden choropleth serisi oluştur
+      var series = map.choropleth(worldDefaultDataSet);
+
+      // Renk skalası tanımla (dilersen gradient de kullanabilirsin)
+      var colorScale = anychart.scales.linearColor();
+      colorScale.colors(["#d4e6f1", "#21618c"]);
+      series.colorScale(colorScale);
+
+      // Hover ve tooltip ayarları
+      series.hovered().fill("#f39c12");
+      series.tooltip().format(function() {
+        return this.getData('id') + ': ' + this.getData('value');
+      });
+
+      // Haritayı "container" div'ine yerleştir
+      map.container('container');
+
+      // Haritayı çiz
+      map.draw();
+    });
+  </script>
+</body>
+</html>
