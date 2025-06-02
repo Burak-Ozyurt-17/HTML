@@ -62,8 +62,8 @@
             riskValue = Math.min(Math.max(riskValue, 0), 1);
 
             data.push({
-              x: lon.toFixed(5),
-              y: lat.toFixed(5),
+              x: j.toString(),  // Sadece indeks veriliyor
+              y: i.toString(),  // Sadece indeks veriliyor
               heat: riskValue * 100
             });
           }
@@ -78,6 +78,9 @@
       let scale = anychart.scales.linearColor();
       scale.colors(["#00ff00", "#ffff00", "#ff0000"]);
       chart.colorScale(scale);
+
+      chart.xAxis(false);
+      chart.yAxis(false);
 
       chart.container("container");
       chart.draw();
