@@ -1,113 +1,91 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Risk Isı Haritası - Orantılı Kareler</title>
-    <script src="https://cdn.anychart.com/releases/8.7.1/js/anychart-core.min.js"></script>
-    <script src="https://cdn.anychart.com/releases/8.7.1/js/anychart-heatmap.min.js"></script>
-    <style>
-      html, body {
-        width: 100%;
-        height: 100%;
-        margin: 0; padding: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background: #111;
+<head>
+  <meta charset="UTF-8">
+  <title>Risk Heatmap Widget</title>
+  <script src="https://cdn.anychart.com/releases/8.7.1/js/anychart-core.min.js"></script>
+  <script src="https://cdn.anychart.com/releases/8.7.1/js/anychart-heatmap.min.js"></script>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: transparent;
+      overflow: hidden;
+    }
+    #container {
+      width: 100vw;
+      height: 100vh;
+    }
+  </style>
+</head>
+<body>
+  <div id="container"></div>
+  <script>
+    anychart.onDocumentReady(function () {
+      const rows = 15;
+      const cols = 15;
+
+      const latStart = 40.90;
+      const lonStart = 29.00;
+      const latEnd = 40.70;
+      const lonEnd = 29.30;
+
+      const riskCenters = [
+        [40.82, 29.05],
+        [40.78, 29.18],
+        [40.75, 29.10]
+      ];
+
+      const latStep = (latEnd - latStart) / (rows - 1);
+      const lonStep = (lonEnd - lonStart) / (cols - 1);
+
+      function distance(lat1, lon1, lat2, lon2) {
+        return Math.sqrt(Math.pow(lat1 - lat2, 2) + Math.pow(lon1 - lon2, 2));
       }
-      #container {
-        /* Başlangıçta kare yapıyoruz, genişlik=yükseklik */
-        width: 90vw;
-        height: 90vw;
-        max-width: 1000px; /* İstersen sınır koy */
-        max-height: 1000px;
-      }
-    </style>
-  </head>
-  <body>
-    <div id="container"></div>
-    <script>
-      anychart.onDocumentReady(function () {
-        const rows = 15;
-        const cols = 15;
 
-        // Harita sınırları (örnek enlem ve boylam)
-        const latStart = 40.90;
-        const lonStart = 29.00;
-        const latEnd = 40.70;
-        const lonEnd = 29.30;
+      function generateRiskData() {
+        let data = [];
+        const maxDist = Math.sqrt(Math.pow(latStart - latEnd, 2) + Math.pow(lonStart - lonEnd, 2));
+        for (let i = 0; i < rows; i++) {
+          for (let j = 0; j < cols; j++) {
+            const lat = latStart + i * latStep;
+            const lon = lonStart + j * lonStep;
 
-        const riskCenters = [
-          [40.82, 29.05],
-          [40.78, 29.18],
-          [40.75, 29.10]
-        ];
-
-        const latStep = (latEnd - latStart) / (rows - 1);
-        const lonStep = (lonEnd - lonStart) / (cols - 1);
-
-        function distance(lat1, lon1, lat2, lon2) {
-          return Math.sqrt(Math.pow(lat1 - lat2, 2) + Math.pow(lon1 - lon2, 2));
-        }
-
-        function generateRiskData() {
-          let data = [];
-          const maxDist = Math.sqrt(Math.pow(latStart - latEnd, 2) + Math.pow(lonStart - lonEnd, 2));
-          for (let i = 0; i < rows; i++) {
-            for (let j = 0; j < cols; j++) {
-              const lat = latStart + i * latStep;
-              const lon = lonStart + j * lonStep;
-
-              let minDist = Infinity;
-              for (const center of riskCenters) {
-                const d = distance(lat, lon, center[0], center[1]);
-                if (d < minDist) minDist = d;
-              }
-
-              let riskValue = 1 - minDist / maxDist;
-              riskValue += (Math.random() - 0.5) * 0.1;
-              riskValue = Math.min(Math.max(riskValue, 0), 1);
-
-              data.push({
-                x: lon.toFixed(5),
-                y: lat.toFixed(5),
-                heat: riskValue * 100
-              });
+            let minDist = Infinity;
+            for (const center of riskCenters) {
+              const d = distance(lat, lon, center[0], center[1]);
+              if (d < minDist) minDist = d;
             }
-          }
-          return data;
-        }
 
-        let chart = anychart.heatMap(generateRiskData());
-        chart.labels(false); // sayıları gizle
+            let riskValue = 1 - minDist / maxDist;
+            riskValue += (Math.random() - 0.5) * 0.1;
+            riskValue = Math.min(Math.max(riskValue, 0), 1);
 
-        let scale = anychart.scales.linearColor();
-        scale.colors(["#00ff00", "#ffff00", "#ff0000"]);
-        chart.colorScale(scale);
-
-        chart.stroke("none");
-        chart.container("container");
-        chart.draw();
-
-        setInterval(() => {
-          chart.data(generateRiskData());
-        }, 3000);
-
-        // Ekran orantısına göre container boyutunu ayarla
-        function adjustContainer() {
-          const container = document.getElementById('container');
-          const width = window.innerWidth;
-          const height = window.innerHeight;
-          if (width / height > 16 / 9) {
-            container.style.height = height * 0.9 + 'px';
-            container.style.width = (height * 0.9 * (cols / rows)) + 'px';
-          } else {
-            container.style.width = width * 0.9 + 'px';
-            container.style.height = (width * 0.9 * (rows / cols)) + 'px';
+            data.push({
+              x: lon.toFixed(5),
+              y: lat.toFixed(5),
+              heat: riskValue * 100
+            });
           }
         }
-        window.addEventListener('resize', adjustContainer);
-        adjustContainer();
-      });
-    </script>
-  </body>
+        return data;
+      }
+
+      let chart = anychart.heatMap(generateRiskData());
+      chart.labels(false);
+      chart.stroke("none");
+
+      let scale = anychart.scales.linearColor();
+      scale.colors(["#00ff00", "#ffff00", "#ff0000"]);
+      chart.colorScale(scale);
+
+      chart.container("container");
+      chart.draw();
+
+      setInterval(() => {
+        chart.data(generateRiskData());
+      }, 3000);
+    });
+  </script>
+</body>
 </html>
