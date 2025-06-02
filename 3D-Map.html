@@ -142,12 +142,28 @@
       text-align: center;
       width: 100%;
     }
+    #topRightBox {
+      position: absolute;
+      top: 10px;
+      right: 32px;
+      width: 100px;
+      height: 100px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      z-index: 15;
+}
+
   </style>
 </head>
 <body>
   <div id="viewDiv"></div>
   <div id="minimapDiv"></div>
   <div id="infoPanel"></div>
+  <div class="riskmap">
+
 
   <div id="camerabox">
     <img src="http://127.0.0.1:5000/video_feed"
@@ -178,6 +194,10 @@
     <canvas id="gaugeCanvas" width="80" height="80"></canvas>
     <div id="speedText"></div>
   </div>
+  <div id="topRightBox">
+    <iframe src="https://burak-ozyurt-17.github.io/HTML/RiskMap.html"width="150px"height="150px"></iframe>
+  </div>
+
 
   <script>
     require([
