@@ -144,7 +144,7 @@
     }
     #topRightBox {
       position: absolute;
-      top: 45px;
+      top: 37.5px;
       right: 32px;
       width: 100px;
       height: 100px;
@@ -156,6 +156,25 @@
       z-index: 15;
 }
 
+    #topCenterBox {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 550px;
+      height: 48px;
+      background: rgba(0, 0, 0, 0.6);
+      border: 1px solid #aaa;
+      border-radius: 10px;
+      z-index: 20;
+      overflow: hidden;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+    #topCenterBox iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
   </style>
 </head>
 <body>
@@ -177,11 +196,12 @@
    </div>
 
   </div>
-
+  
   <div id="altitudeContainer">
     <div id="altitudeScroller">
       <div id="altitudeLabels"></div>
     </div>
+    
     <div id="targetLine"></div>
     <div id="leftSolidLine"></div>
     <div id="rightSolidLine"></div>
@@ -197,6 +217,10 @@
   <div id="topRightBox">
     <iframe src="https://burak-ozyurt-17.github.io/HTML/RiskMap.html"width="150px"height="150px"></iframe>
   </div>
+  <div id="topCenterBox">
+  <iframe src="https://burak-ozyurt-17.github.io/HTML/Sensors.html"></iframe>
+</div>
+
 
 
   <script>
@@ -509,3 +533,4 @@ document.addEventListener('DOMContentLoaded', () => {
   </script>
 </body>
 </html>
+
