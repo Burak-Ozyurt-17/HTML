@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Sensör Paneli</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: transparent;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .sensor-preview {
+      background-color: rgba(26, 28, 40, 0.85);
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    }
+
+    .sensor-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 15px;
+      color: white;
+    }
+
+    .sensor-icon {
+      width: 24px;
+      height: 24px;
+    }
+
+    .data-high {
+      color: #dc302d;
+    }
+
+    .data-elevated {
+      color: #f0a500;
+    }
+
+    .data-safe {
+      color: #4caf50;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="sensor-preview">
+    <div class="sensor-item">
+      <img id="ppmIcon" class="sensor-icon" src="" alt="PPM Icon">
+      <span id="ppmVal">-- ppm</span>
+    </div>
+    <div class="sensor-item">
+      <img id="tempIcon" class="sensor-icon" src="" alt="Sıcaklık Icon">
+      <span id="tempVal">-- °C</span>
+    </div>
+    <div class="sensor-item">
+      <img id="humIcon" class="sensor-icon" src="" alt="Nem Icon">
+      <span id="humVal">-- %</span>
+    </div>
+  </div>
+
+  <script>
+    function updateSensorBox() {
+      const ppm = Math.floor(Math.random() * 700);
+      const temp = (20 + Math.random() * 25).toFixed(1);
+      const hum = Math.floor(Math.random() * 100);
+
+      const baseURL = "https://raw.githubusercontent.com/Burak-Ozyurt-17/FireHawk-UI/main/";
+
+      const ppmVal = document.getElementById("ppmVal");
+      const tempVal = document.getElementById("tempVal");
+      const humVal = document.getElementById("humVal");
+
+      const ppmIcon = document.getElementById("ppmIcon");
+      const tempIcon = document.getElementById("tempIcon");
+      const humIcon = document.getElementById("humIcon");
+
+      // PPM (Low: 0-300, Medium: 301-500, High: 501+)
+      if (ppm > 500) {
+        ppmVal.textContent = `${ppm} ppm – Tehlikeli`;
+        ppmVal.className = "data-high";
+        ppmIcon.src = baseURL + "HPPM";
+      } else if (ppm > 300) {
+        ppmVal.textContent = `${ppm} ppm – Orta`;
+        ppmVal.className = "data-elevated";
+        ppmIcon.src = baseURL + "MPPM";
+      } else {
+        ppmVal.textContent = `${ppm} ppm – Güvenli`;
+        ppmVal.className = "data-safe";
+        ppmIcon.src = baseURL + "SPPM";
+      }
+
+      // Sıcaklık (Low: 0-30, Medium: 30-40, High: 40+)
+      if (temp > 40) {
+        tempVal.textContent = `${temp}°C – Tehlikeli`;
+        tempVal.className = "data-high";
+        tempIcon.src = baseURL + "HTEMP";
+      } else if (temp > 30) {
+        tempVal.textContent = `${temp}°C – Yüksek`;
+        tempVal.className = "data-elevated";
+        tempIcon.src = baseURL + "MTEMP";
+      } else {
+        tempVal.textContent = `${temp}°C – Normal`;
+        tempVal.className = "data-safe";
+        tempIcon.src = baseURL + "STEMP";
+      }
+
+      // Nem (Safe: 30–70, Medium: 20–29 or 71–80, High: <20 or >80)
+      if (hum < 20 || hum > 80) {
+        humVal.textContent = `${hum}% – Tehlikeli`;
+        humVal.className = "data-high";
+        humIcon.src = baseURL + "HWATER";
+      } else if ((hum >= 20 && hum < 30) || (hum > 70 && hum <= 80)) {
+        humVal.textContent = `${hum}% – Orta`;
+        humVal.className = "data-elevated";
+        humIcon.src = baseURL + "MWATER";
+      } else {
+        humVal.textContent = `${hum}% – Normal`;
+        humVal.className = "data-safe";
+        humIcon.src = baseURL + "SWATER";
+      }
+    }
+
+    updateSensorBox();
+    setInterval(updateSensorBox, 3000);
+  </script>
+
+</body>
+</html>
