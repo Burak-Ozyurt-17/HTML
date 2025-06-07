@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="https://js.arcgis.com/4.32/esri/themes/light/main.css" />
   <script src="https://js.arcgis.com/4.32/"></script>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 
   <style>
     html, body {
@@ -149,9 +150,22 @@
       display: flex;
       align-items: center;
       gap: 6px;
-      font-family: 'Orbitron', sans-serif;
+      font-family: 'Roboto Condensed', sans-serif;
     }
-    
+    #connectionLabel {
+      position: absolute;
+      top: 140px;
+      left: 105px;
+      background: rgba(0, 0, 0, 0.6);
+      font-size: 16px;
+      font-weight: bold;
+      color: #fff;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family:'Open Sans',sans-serif;
+    }
     #liveLabel .dot {
       width: 8px;
       height: 8px;
@@ -248,6 +262,9 @@
       <div class="dot"></div>
       Canlı Yayın
     </div>
+    <div id="connectionLabel">
+      Görüntü Bekleniyor...
+    </div>
   
     <div id="detectionText"
          style="position: absolute; left: 12px; bottom: 10px; 
@@ -299,6 +316,7 @@
       const mainMap = new Map({ basemap: "hybrid", ground: "world-elevation" });
       const miniMap = new Map({ basemap: "dark-gray-vector" });
       
+      
 
       const buildingLayer = new SceneLayer({
         url: "https://basemaps3d.arcgis.com/arcgis/rest/services/OpenStreetMap3D_Buildings_v1/SceneServer",
@@ -347,6 +365,7 @@
       });
 
       sceneView.ui.add(new Compass({ view: sceneView }), "top-left");
+      
 
       const graphicsLayer = new GraphicsLayer({ elevationInfo: { mode: "relative-to-ground" } });
       mainMap.add(graphicsLayer);
@@ -613,6 +632,19 @@ document.addEventListener('DOMContentLoaded', () => {
   fetchDetections();  
   setInterval(fetchDetections, 1000);  
 });
+const camImg = document.querySelector("#camerabox img");
+const liveLabel = document.getElementById("liveLabel");
+const connectionLabel = document.getElementById("connectionLabel");
+
+camImg.onload = () => {
+  liveLabel.style.display = "flex";
+  connectionLabel.textContent = "Canlı Yayın";
+};
+
+camImg.onerror = () => {
+  liveLabel.style.display = "none";
+  connectionLabel.textContent = "Görüntü Bekleniyor...";
+};
     });
   </script>
 </body>
