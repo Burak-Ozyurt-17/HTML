@@ -20,6 +20,10 @@
       position: absolute; top: 5px; left: 5px; width: 200px; height: 200px;
       z-index: 10; border: 2px solid #999; border-radius: 10px; overflow: hidden;
     }
+     #minimapDiv2 {
+      position: absolute; top: 5px; right: 5px; width: 200px; height: 200px;
+      z-index: 10; border: 2px solid #999; border-radius: 10px; overflow: hidden;
+    }
     #infoPanel {
       position: absolute; top: 210px; left: 8px; padding: 12px 16px;
       background: rgba(40,40,40,0.95); font-size: 14px; color: #f1f1f1;
@@ -196,7 +200,7 @@
     }
     #topRightBox iframe {
       position: absolute; left:-1.5px;top:-1.5px;width: 200px; height: 200px;
-      z-index: 10; border: 2px solid #999; border-radius: 10px; overflow: hidden;
+      z-index: 10; border: 2px solid #999; border-radius: 10px; overflow: hidden;opacity:0.3;
     }
 
     #topCenterBox {
@@ -231,6 +235,7 @@
 <body>
   <div id="viewDiv"></div>
   <div id="minimapDiv"></div>
+  <div id="minimapDiv2"></div>
   <div id="infoPanel"></div>
   <div id="screenFilter"></div>
   <div class="riskmap">
@@ -293,6 +298,7 @@
 
       const mainMap = new Map({ basemap: "hybrid", ground: "world-elevation" });
       const miniMap = new Map({ basemap: "dark-gray-vector" });
+      
 
       const buildingLayer = new SceneLayer({
         url: "https://basemaps3d.arcgis.com/arcgis/rest/services/OpenStreetMap3D_Buildings_v1/SceneServer",
@@ -325,6 +331,14 @@
 
       const minimapView = new MapView({
         container: "minimapDiv",
+        map: miniMap,
+        center: [32.8597, 39.9334],
+        zoom: 14,
+        constraints: { rotationEnabled: false },
+        ui: { components: [] }
+      });
+      const minimapView2 = new MapView({
+        container: "minimapDiv2",
         map: miniMap,
         center: [32.8597, 39.9334],
         zoom: 14,
