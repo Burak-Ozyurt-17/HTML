@@ -27,6 +27,15 @@
       box-shadow: 0 4px 10px rgba(0,0,0,0.3); backdrop-filter: blur(4px);
       z-index: 10; transition: all 0.3s ease;
     }
+    #screenFilter {
+      position: absolute;
+      top: 0;
+      width:100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.25); 
+      pointer-events: none;
+      z-index: 10;
+    }
 
     #altitudeContainer {
       position: absolute;
@@ -223,6 +232,7 @@
   <div id="viewDiv"></div>
   <div id="minimapDiv"></div>
   <div id="infoPanel"></div>
+  <div id="screenFilter"></div>
   <div class="riskmap">
 
 
