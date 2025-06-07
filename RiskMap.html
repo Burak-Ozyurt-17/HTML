@@ -103,7 +103,7 @@
                 }
               }
               // Ağırlıklar ile yumuşatma (burayı değiştirerek geçiş sertliğini ayarlayabilirsin)
-              tempData[i][j] = 0.3 * smoothData[i][j] + 0.7 * (sum / count);
+              tempData[i][j] = 0.5 * smoothData[i][j] + 0.5 * (sum / count);
             }
           }
           smoothData = tempData;
