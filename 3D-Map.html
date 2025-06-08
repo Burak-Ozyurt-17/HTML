@@ -307,10 +307,10 @@
       "esri/Map", "esri/views/SceneView", "esri/views/MapView",
       "esri/layers/GraphicsLayer", "esri/Graphic", "esri/geometry/Point",
       "esri/widgets/Compass", "esri/symbols/SimpleMarkerSymbol",
-      "esri/layers/SceneLayer", "esri/symbols/SimpleLineSymbol","esri/geometry/Polyline"
+      "esri/layers/SceneLayer"
     ], function(
       Map, SceneView, MapView, GraphicsLayer, Graphic, Point,
-      Compass, SimpleMarkerSymbol, SceneLayer,SimpleLineSymbol,Polyline
+      Compass, SimpleMarkerSymbol, SceneLayer
     ) {
 
       const mainMap = new Map({ basemap: "hybrid", ground: "world-elevation" });
@@ -400,25 +400,6 @@
 
       graphicsLayer.add(drone);
       minimapView.graphics.add(miniMarker);
-      const pathLayer = new GraphicsLayer();
-      minimapView.map.add(pathLayer);
-      
-      let dronePath = {
-        type: "polyline",
-        paths: [[[dronePoint.x, dronePoint.y]]],
-        spatialReference: { wkid: 4326 }
-      };
-      
-      const pathGraphic = new Graphic({
-        geometry: dronePath,
-        symbol: {
-          type: "simple-line",
-          color: [255, 0, 0, 0.8],
-          width: 2
-        }
-      });
-      
-      pathLayer.add(pathGraphic);
 
       let prevPos = dronePoint.clone();
       let targetPos = new Point({
@@ -483,29 +464,22 @@
         requestAnimationFrame(animateFPS);
       }
       animateFPS();
-      let moveCount = 0;
 
       async function moveDroneAndCamera() {
         if (isAnimating) return;
-        moveCount++;
 
-        if (moveCount % 50 === 0) {
-          // 50 adımda bir yeni hedef belirle
-          const angle = Math.random() * 2 * Math.PI;
-          const radius = Math.random() * 5;
-          const offsetX = Math.cos(angle) * radius;
-          const offsetY = Math.sin(angle) * radius;
-          const offsetZ = (Math.random() - 0.5) * 10;
-      
+        const curr = drone.geometry;
+        const moveStep = 0.00001;
+        const distance = Math.abs(curr.x - targetPos.x);
+
+        if (distance < moveStep) {
           targetPos = new Point({
-            x: Math.min(Math.max(curr.x + offsetX, 0), 120),
-            y: Math.min(Math.max(curr.y + offsetY, 0), 120),
-            z: Math.min(Math.max(curr.z + offsetZ, 0), 120),
+            x: targetPos.x + Math.min(Math.max(targetPos.x + (Math.random() - 0.5) * 4, 0), 120),
+            y: targetPos.y+ Math.min(Math.max(targetPos.y + (Math.random() - 0.5) * 4, 0), 120),
+            z: Math.min(Math.max(targetPos.z + (Math.random() - 0.5) * 4, 0), 120),
             spatialReference: curr.spatialReference
           });
         }
-
-
 
         const dx = targetPos.x - curr.x;
         const dy = targetPos.y - curr.y;
@@ -522,8 +496,6 @@
         });
 
         drone.geometry = nextPos;
-        dronePath.paths[0].push([nextPos.x, nextPos.y]);
-        pathGraphic.geometry = { ...dronePath }; 
         miniMarker.geometry = nextPos;
         minimapView.center = [nextPos.x, nextPos.y];
 
@@ -677,3 +649,5 @@ camImg.onerror = () => {
   </script>
 </body>
 </html>
+
+
