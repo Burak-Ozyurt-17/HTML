@@ -355,14 +355,13 @@
     @media (max-width: 932px) {
 
   #altitudeContainer,
-  #gaugeContainer,
   #switchLabel{
     transform: scale(0.75);
     transform-origin: top left;
   }
   #infoPanel{
     scale:0.6;
-    margin-top:-22.25%;
+    margin-top:-22%;
     margin-left:-3.2%;
   }
   #detection{
@@ -389,29 +388,29 @@
   #topCenterBox iframe {
     width: 150%;
     height: 10% ; 
-    margin-left:0;
+    margin-left:-1%;
     transform: none;
-    scale:0.4;
+    scale:0.35;
   }
   
   #minimapDiv2{
-    top: -13.2%;
-    right:-8.2%;
+    top: -14%;
+    right:-9%;
     scale:0.5;
     
   }
   #minimapDiv{
-    top: -13%;
+    top: -14%;
     left:-5%;
     scale:0.5;
     
   }
   #topRightBox {
-    top: -13%;
-    right:-8%;
+    top: -13.8%;
+    right:-8.8%;
     scale:60%;
     border: none;
-    border-radius: 8px;
+    border-radius: 12px;
   }
 
   #topRightBox iframe {
@@ -456,20 +455,22 @@
     width: 60px;
   }
 
-  #gaugeContainer {
-    width: 100px;
-    height: 100px;
-    bottom: 10px;
-    right: 10px;
-  }
 
   #gaugeCanvas {
-    width: 60px;
-    height: 60px;
+    width: 130px;
+    height: 130px;
+    scale:0.75;
+  }
+  #gaugeContainer{
+    margin-right:-2%;
+    width: 15%;
+    height: 21.2%;
+    scale:0.75;
   }
 
   #speedText {
     font-size: 12px;
+    margin-bottom:7.5%;
   }
 
   .switch {
@@ -565,7 +566,7 @@
   <div id="gaugeContainer">
     <img src="https://raw.githubusercontent.com/Burak-Ozyurt-17/FireHawk-UI/main/Web%20Sitesi%20UI%20(2).png"
          style="position:absolute; bottom:5px; left:3px; width:140px; height:140px;">
-    <canvas id="gaugeCanvas" width="80" height="80"></canvas>
+    <canvas id="gaugeCanvas" width="80%" height="80"></canvas>
     <div id="speedText"></div>
   </div>
   <div id="topRightBox">
