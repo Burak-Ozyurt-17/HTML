@@ -352,65 +352,95 @@
     input:checked + .slider:before {
       transform: translateX(26px);
     }
-    @media (max-width: 768px) {
+    @media (max-width: 932px) {
 
-  #minimapDiv,
-  #minimapDiv2,
-  #infoPanel,
   #altitudeContainer,
   #gaugeContainer,
-  #connectionLabel,
-  #infoPanelCam,
-  #switchLabel,
-  #detectionText,
-  #detection {
+  #switchLabel{
     transform: scale(0.75);
     transform-origin: top left;
+  }
+  #infoPanel{
+    scale:0.75;
+    margin-top:-11.5%;
+    margin-left:-3.5%;
+  }
+  #detection{
+    margin-left:0%;
+    margin-bottom:0.7%;
+    scale:0.75; 
+  }
+  #detectionText{
+    margin-left:-13%;
+    margin-bottom:1.3%;
+    scale:0.75;  
   }
 
   #topCenterBox {
     top: 0;
     left: 0;
     transform: none;
-    width: 100vw;
+    width: 100%;
     height: auto;
     padding: 8px;
     display: block;
   }
 
   #topCenterBox iframe {
-    width: 100% !important;
-    height: 140px !important;
-    margin: 0;
+    width: 150%;
+    height: 10% ;
+    margin-left:-25%;
     transform: none;
+    scale:0.5;
   }
-
+  
+  #minimapDiv2{
+    top: -7.5%;
+    right:-5%;
+    scale:0.6;
+    
+  }
+  #minimapDiv{
+    top: -7.5%;
+    left:-5%;
+    scale:0.6;
+    
+  }
   #topRightBox {
-    top: 150px;
-    left: 0;
-    width: 100vw;
-    height: 150px;
+    top: -7.3%;
+    right:-4.8%;
+    scale:60%;
     border: none;
-    border-radius: 0;
+    border-radius: 8px;
   }
 
   #topRightBox iframe {
-    width: 100% !important;
-    height: 100% !important;
+    width: 100% ;
+    height: 100% ;
     opacity: 0.6;
     border-radius: 0;
   }
 
   #camerabox {
-    bottom: 200px;
-    left: 10px;
-    width: 90vw;
-    height: 180px;
+    bottom: 2%;
+    left: 0%;
+    width: 30%;
+    height: 30%;
     border-radius: 12px;
   }
 
   #camerabox_box {
     display: none;
+  }
+  #infoPanelCam{
+    scale:0.6;
+    margin-right:-10%;
+    margin-bottom:2%;
+  }
+  #connectionLabel{
+    margin-left:-10%;
+    margin-top:-17.5%;
+    scale:0.75;
   }
 
   #altitudeContainer {
@@ -442,8 +472,8 @@
   }
 
   .switch {
-    bottom: 10px;
-    left: 40px;
+    bottom: 7.5%;
+    left: 7.5%;
   }
 
   #switchLabel {
@@ -466,8 +496,8 @@
 
   #connectionLabel {
     font-size: 13px;
-    top: 120px;
-    left: 90px;
+    top: 65%;
+    left: 30%;
   }
 
   #liveLabel {
@@ -550,11 +580,11 @@
     require([
       "esri/Map", "esri/views/SceneView", "esri/views/MapView",
       "esri/layers/GraphicsLayer", "esri/Graphic", "esri/geometry/Point",
-      "esri/widgets/Compass", "esri/symbols/SimpleMarkerSymbol",
+       "esri/symbols/SimpleMarkerSymbol",
       "esri/layers/SceneLayer"
     ], function(
       Map, SceneView, MapView, GraphicsLayer, Graphic, Point,
-      Compass, SimpleMarkerSymbol, SceneLayer
+       SimpleMarkerSymbol, SceneLayer
     ) {
 
       const mainMap = new Map({ basemap: "hybrid", ground: "world-elevation" });
@@ -608,7 +638,7 @@
         ui: { components: [] }
       });
 
-      sceneView.ui.add(new Compass({ view: sceneView }), "top-left");
+
       
 
       const graphicsLayer = new GraphicsLayer({ elevationInfo: { mode: "relative-to-ground" } });
