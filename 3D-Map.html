@@ -352,6 +352,135 @@
     input:checked + .slider:before {
       transform: translateX(26px);
     }
+    @media (max-width: 768px) {
+
+  #minimapDiv,
+  #minimapDiv2,
+  #infoPanel,
+  #altitudeContainer,
+  #gaugeContainer,
+  #connectionLabel,
+  #infoPanelCam,
+  #switchLabel,
+  #detectionText,
+  #detection {
+    transform: scale(0.75);
+    transform-origin: top left;
+  }
+
+  #topCenterBox {
+    top: 0;
+    left: 0;
+    transform: none;
+    width: 100vw;
+    height: auto;
+    padding: 8px;
+    display: block;
+  }
+
+  #topCenterBox iframe {
+    width: 100% !important;
+    height: 140px !important;
+    margin: 0;
+    transform: none;
+  }
+
+  #topRightBox {
+    top: 150px;
+    left: 0;
+    width: 100vw;
+    height: 150px;
+    border: none;
+    border-radius: 0;
+  }
+
+  #topRightBox iframe {
+    width: 100% !important;
+    height: 100% !important;
+    opacity: 0.6;
+    border-radius: 0;
+  }
+
+  #camerabox {
+    bottom: 200px;
+    left: 10px;
+    width: 90vw;
+    height: 180px;
+    border-radius: 12px;
+  }
+
+  #camerabox_box {
+    display: none;
+  }
+
+  #altitudeContainer {
+    right: 10px;
+    width: 60px;
+    height: 180px;
+  }
+
+  #altitudeValueBox {
+    bottom: -30px;
+    font-size: 13px;
+    width: 60px;
+  }
+
+  #gaugeContainer {
+    width: 100px;
+    height: 100px;
+    bottom: 10px;
+    right: 10px;
+  }
+
+  #gaugeCanvas {
+    width: 60px;
+    height: 60px;
+  }
+
+  #speedText {
+    font-size: 12px;
+  }
+
+  .switch {
+    bottom: 10px;
+    left: 40px;
+  }
+
+  #switchLabel {
+    bottom: 30px;
+    left: 10px;
+    font-size: 12px;
+  }
+
+  #detectionText {
+    bottom: 30px;
+    left: 110px;
+    font-size: 12px;
+  }
+
+  #detection {
+    bottom: 10px;
+    left: 110px;
+    font-size: 13px;
+  }
+
+  #connectionLabel {
+    font-size: 13px;
+    top: 120px;
+    left: 90px;
+  }
+
+  #liveLabel {
+    font-size: 12px;
+    top: 6px;
+    left: 10px;
+  }
+
+  #liveLabel .dot {
+    width: 6px;
+    height: 6px;
+  }
+}
 
   </style>
 </head>
